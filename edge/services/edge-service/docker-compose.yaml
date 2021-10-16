@@ -1,0 +1,8 @@
+version: '3.5'
+
+services:
+  edge-service:
+    image: edge-service:0.1
+    container_name: edge-service
+    ports:
+      - 8080:8080

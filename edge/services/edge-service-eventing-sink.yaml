@@ -1,0 +1,16 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: edge-service
+spec:
+  template:
+    metadata:
+      name: edge-service-v1
+      annotations:
+        autoscaling.knative.dev/target: "1"
+    spec:
+      containers:
+      - name: edge-service
+        image: dev.local/edge-service:0.1
+        imagePullPolicy: Never
+        args: ["mosquitto", 1883, "mytopic-response"]

@@ -1,0 +1,15 @@
+# MQTT Sink for Cloud Event sent to Cloud Landscape
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: mqtt-edge-cloud-sink-binding
+spec:
+  source:
+    ref:
+      kind: Broker
+      apiVersion: messaging.knative.dev/v1
+      name: default
+  sink:
+    uri: paho:myreturntopic
+    properties:
+      brokerUrl: "tcp://mosquitto:1883"
