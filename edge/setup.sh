@@ -85,18 +85,23 @@ kamel install --olm=false -n default --global --registry docker.io --organizatio
 #kamel init example.yaml
 #kamel run example.yaml --dev
 
+# Create Service Sink
+kubectl apply -f services/edge-service-eventing-sink.yaml
+kubectl apply -f resources/edge-event-handler-mqtt-source.yaml
+
+# Edge Service
+kubectl logs edge-service-v1-deployment-7756945f78-4jzkb edge-service
+
 # Configure Apache Kamel resources
-kubectl apply -f resources/mqtt-device-data-source-binding.yaml --namespace mqtt
-kubectl apply -f resources/mqtt-service-data-source-binding.yaml --namespace mqtt
+kubectl apply -f resources/mqtt-device-data-source-binding.yaml
+kubectl apply -f resources/mqtt-service-data-source-binding.yaml
 kubectl get pods --namespace mqtt
 
 # Configure Broker Trigger and Sink
 kubectl apply -f services/edge-service-eventing-sink.yaml
 kubectl apply -f services/edge-service-eventing-trigger.yaml
 
-
 kind delete cluster --name edge-cluster
-
 
 # Channel
 kubectl apply -f channel/channel.yaml

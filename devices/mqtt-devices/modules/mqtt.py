@@ -12,10 +12,9 @@ class MQTTClient:
     def connect_mqtt(self):
         def on_connect(client, userdata, flags, rc) -> None:
             if rc == 0:
-                print("Connected to MQTT Broker!")
-                print("Listening on topic: ", self.topic)
+                print("Connected to MQTT Broker on topic %s", self.topic)
             else:
-                print("Failed to connect, return code %d\n", rc)
+                print("Failed to connect to topic %s, return code %d\n", self.topic, rc)
 
         self.mqttclient.on_connect = on_connect
         self.mqttclient.connect(self.broker, self.port)

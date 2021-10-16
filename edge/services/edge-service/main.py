@@ -1,5 +1,6 @@
 import sys
 import json
+import logging
 from flask import Flask, request
 from modules.cloudevent import CloudEventService
 from modules.mqtt import MQTTClient
@@ -25,12 +26,17 @@ client_id = "edge-service"
 
 app = Flask(__name__)
 
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+app.logger.addHandler(handler)
+
 @app.route("/", methods=["POST"])
 def home():
     cloud_event = CloudEventService()
     event = cloud_event.receive_message(request)
 
-    print(
+    app.logger.info(
         f"Found {event['id']} from {event['source']} with type "
         f"{event['type']} and specversion {event['specversion']}"
     )
@@ -45,5 +51,5 @@ def home():
 if __name__ == "__main__":
     mqtt_client = MQTTClient(client_id=client_id, broker=broker_address, port=broker_port, topic=topic)
     mqtt_client.connect_mqtt()
-    print('teste')
+    app.logger.info("Starting up server...")
     app.run(host='0.0.0.0', port=8080)

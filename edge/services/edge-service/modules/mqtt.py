@@ -1,6 +1,8 @@
 import time
+import logging
 from paho.mqtt import client as paho_mqtt_client
 
+logger = logging.getLogger('mqtt-client')
 class MQTTClient:
 
     def __init__(self, client_id, broker, port, topic) -> None:
@@ -12,9 +14,9 @@ class MQTTClient:
     def connect_mqtt(self):
         def on_connect(client, userdata, flags, rc) -> None:
             if rc == 0:
-                print("Connected to MQTT Broker!")
+                print("Connected to MQTT Broker on topic %s", self.topic)
             else:
-                print("Failed to connect, return code %d\n", rc)
+                print("Failed to connect to topic %s, return code %d\n", self.topic, rc)
 
         self.mqttclient.on_connect = on_connect
         self.mqttclient.connect(self.broker, self.port)
@@ -25,7 +27,6 @@ class MQTTClient:
         status = result[0]
         if status == 0:
             print(f"Send `{msg}` to topic `{self.topic}`")
-            print("Listening on topic: ", self.topic)
         else:
             print(f"Failed to send message to topic {self.topic}") 
 
