@@ -1,5 +1,11 @@
 kind create cluster --name edge-cluster --config kind-edge-cluster-config.yaml
 
+# Build microservices
+docker build -t dev.local/edge-service:0.1 .
+
+# Load containers into kubernetes cluster (kind)
+kind load docker-image dev.local/edge-service:0.1 --name edge-cluster
+
 # Configure Knative Serving
 kubectl apply -f https://github.com/knative/serving/releases/download/v0.26.0/serving-crds.yaml --wait
 kubectl apply -f https://github.com/knative/serving/releases/download/v0.26.0/serving-core.yaml

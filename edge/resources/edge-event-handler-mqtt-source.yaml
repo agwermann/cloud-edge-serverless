@@ -16,4 +16,4 @@ spec:
     ref:
       kind: Service
       apiVersion: serving.knative.dev/v1
-      name: subscriber
+      name: edge-service
