@@ -2,6 +2,7 @@ kind create cluster --name edge-cluster --config kind-edge-cluster-config.yaml
 
 # Build microservices
 docker build -t dev.local/edge-service:0.1 .
+kind load docker-image dev.local/edge-service:0.1 --name edge-cluster
 
 # Load containers into kubernetes cluster (kind)
 kind load docker-image dev.local/edge-service:0.1 --name edge-cluster
@@ -64,14 +65,13 @@ kubectl logs edge-service-subscriber-00001-deployment-67f77b7b8c-z7x6c -c user-c
 
 kubectl logs -l name=subscriber
 
-
 # Install mosquitto broker
-kubectl create namespace mqtt
-kubectl apply -f broker/mosquitto/mosquitto.yaml --namespace mqtt
-kubectl get pods,deployments,services -n mqtt
+kubectl create namespace #mqtt
+kubectl apply -f broker/mosquitto/mosquitto.yaml #--namespace mqtt
+kubectl get pods,deployments,services #-n mqtt
 kubectl logs -l app=gateway-bridge -f --all-containers
 
-kubectl port-forward --address 0.0.0.0 deployment.apps/mosquitto 1883:1883 -n mqtt
+kubectl port-forward --address 0.0.0.0 deployment.apps/mosquitto 1883:1883
 
 # Configure Kamelets
 #kubectl create namespace camel-k
@@ -79,7 +79,7 @@ kubectl port-forward --address 0.0.0.0 deployment.apps/mosquitto 1883:1883 -n mq
 #kubectl get all -n camel-k
 
 kubectl -n default create secret docker-registry external-registry-secret --docker-username agwermann --docker-password "Xande@100"
-kamel install --olm=false -n default --global --registry docker.io --organization agwermann --registry-secret external-registry-secret
+kamel install --olm=false -n default --global --registry docker.io --organization agwermann --registry-secret external-registry-secret --force
 
 # logged on any namespace (--global flag)
 #kamel init example.yaml
@@ -87,10 +87,11 @@ kamel install --olm=false -n default --global --registry docker.io --organizatio
 
 # Create Service Sink
 kubectl apply -f services/edge-service-eventing-sink.yaml
+
 kubectl apply -f resources/edge-event-handler-mqtt-source.yaml
 
 # Edge Service
-kubectl logs edge-service-v1-deployment-7756945f78-4jzkb edge-service
+kubectl logs edge-service-v1-deployment-5dd6bf8bb6-kd5v7 edge-service
 
 # Configure Apache Kamel resources
 kubectl apply -f resources/mqtt-device-data-source-binding.yaml
@@ -179,7 +180,9 @@ spec:
       type: mqtt
 EOF
 
-kubectl apply -f - << EOF
+kamel describe integration mqtt-source-binding
+
+kubectl delete -f - << EOF
 apiVersion: camel.apache.org/v1alpha1
 kind: KameletBinding
 metadata:
@@ -197,5 +200,12 @@ spec:
     ref:
       kind: Service
       apiVersion: serving.knative.dev/v1
-      name: subscriber
+      name: edge-service-subscriber
 EOF
+
+
+rm KamelExample.java && vim KamelExample.java 
+kamel delete KamelExample.java && kamel run KamelExample.java 
+$ Integration kamel-example deleted
+$ Integration "kamel-example" created
+kamel logs kamel-example

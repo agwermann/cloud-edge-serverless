@@ -28,7 +28,7 @@ class MQTTClient:
         if status == 0:
             print(f"Send `{msg}` to topic `{self.topic}`")
         else:
-            print(f"Failed to send message to topic {self.topic}") 
+            print(f"Failed to send message to topic {self.topic}")
 
     def publish_loop(self):
         msg_count = 0
