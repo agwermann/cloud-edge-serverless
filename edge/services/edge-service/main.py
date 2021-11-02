@@ -58,6 +58,10 @@ def home():
         f"Latency: {latency}"
     )
 
+    app.logger.info(
+        f"Event Data Content: {event.data}"
+    )
+
     mqtt_client.publish(json.dumps(data))
 
     # Return 204 - No-content
