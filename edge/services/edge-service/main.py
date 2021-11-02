@@ -31,6 +31,7 @@ handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 app.logger.addHandler(handler)
+app.logger.setLevel(logging.INFO)
 
 @app.route("/", methods=["POST"])
 def home():
@@ -51,7 +52,7 @@ def home():
     sent_datetime = datetime.datetime.strptime(event.data['timestamp'], "%Y-%m-%dT%H:%M:%S.%f")
     latency = str(now - sent_datetime)
 
-    print(
+    app.logger.info(
         f"Event Priority: {event.data['priority']} - "
         f"Data: {len(event.data['message'])} bytes - "
         f"Latency: {latency}"

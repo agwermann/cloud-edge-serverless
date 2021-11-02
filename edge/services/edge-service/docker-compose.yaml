@@ -2,7 +2,8 @@ version: '3.5'
 
 services:
   edge-service:
-    image: edge-service:0.1
+    image: dev.local/edge-service:0.1
     container_name: edge-service
     ports:
       - 8080:8080
+    command: ["192.168.1.195", "1883", "mytopic-response"]
