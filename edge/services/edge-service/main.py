@@ -1,6 +1,7 @@
 import sys
 import json
 import logging
+import datetime
 from flask import Flask, request
 from modules.cloudevent import CloudEventService
 from modules.mqtt import MQTTClient
@@ -41,7 +42,20 @@ def home():
         f"{event['type']} and specversion {event['specversion']}"
     )
 
-    # Main Process
+    app.logger.info(
+        f"Found {event['id']} from {event['source']} with type "
+        f"{event['type']} and specversion {event['specversion']}"
+    )
+
+    now = datetime.datetime.now()
+    sent_datetime = datetime.datetime.strptime(event.data['timestamp'], "%Y-%m-%dT%H:%M:%S.%f")
+    latency = str(now - sent_datetime)
+
+    print(
+        f"Event Priority: {event.data['priority']} - "
+        f"Data: {len(event.data['message'])} bytes - "
+        f"Latency: {latency}"
+    )
 
     mqtt_client.publish(json.dumps(data))
 
