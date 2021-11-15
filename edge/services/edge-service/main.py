@@ -38,10 +38,7 @@ def home():
     cloud_event = CloudEventService()
     event = cloud_event.receive_message(request)
 
-    app.logger.info(
-        f"Found {event['id']} from {event['source']} with type "
-        f"{event['type']} and specversion {event['specversion']}"
-    )
+    # Process event
 
     app.logger.info(
         f"Found {event['id']} from {event['source']} with type "
@@ -54,7 +51,10 @@ def home():
 
     app.logger.info(
         f"Event Priority: {event.data['priority']} - "
-        f"Data: {len(event.data['message'])} bytes - "
+        f"Data Content: {event.data['message']} bytes - "
+        f"Data Length: {len(event.data['message'])} bytes - "
+        f"Sent time: {sent_datetime}"
+        f"Now: {now}"
         f"Latency: {latency}"
     )
 
