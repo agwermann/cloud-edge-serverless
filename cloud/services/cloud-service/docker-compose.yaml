@@ -1,0 +1,9 @@
+version: '3.5'
+
+services:
+  cloud-service:
+    image: dev.local/cloud-service:0.1
+    container_name: cloud-service
+    ports:
+      - 8080:8080
+    command: ["192.168.1.195", "1883", "mytopic-response"]
