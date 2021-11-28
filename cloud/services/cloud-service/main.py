@@ -19,27 +19,27 @@ def home():
 
     # Process event
 
-    app.logger.info(
-        f"Found {event['id']} from {event['source']} with type "
-        f"{event['type']} and specversion {event['specversion']}"
-    )
+    # app.logger.info(
+    #    f"Found {event['id']} from {event['source']} with type "
+    #    f"{event['type']} and specversion {event['specversion']}"
+    #)
 
     now = datetime.datetime.now()
     sent_datetime = datetime.datetime.strptime(event.data['timestamp'], "%Y-%m-%dT%H:%M:%S.%f")
     latency = str(now - sent_datetime)
 
     app.logger.info(
-        f"Event Priority: {event.data['priority']} - "
-        f"Data Content: {event.data['message']} bytes - "
-        f"Data Length: {len(event.data['message'])} bytes - "
+        f"Event Priority: {event.data['priority']} | "
+        #f"Data Content: {event.data['message']} bytes - "
+        f"Data Length: {len(event.data['message'])} bytes | "
         f"Sent time: {sent_datetime} -"
         f"Now: {now} -"
         f"Latency: {latency}"
     )
 
-    app.logger.info(
-        f"Event Data Content: {event.data}"
-    )
+    # app.logger.info(
+    #    f"Event Data Content: {event.data}"
+    # )
 
     # Return 204 - No-content
     return "", 204
