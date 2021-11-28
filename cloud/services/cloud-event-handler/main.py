@@ -25,8 +25,6 @@ def home():
     cloud_event = CloudEventService()
     event = cloud_event.receive_message(request)
 
-    print(event.data)
-
     #broker_address = 'http://localhost:8080'
     #broker_address = "broker-ingress.knative-eventing.svc.cluster.local/default/default"
 
