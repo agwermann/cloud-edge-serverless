@@ -46,8 +46,8 @@ def home():
         f"Event Priority: {event.data['priority']} | "
         #f"Data Content: {event.data['message']} bytes - "
         f"Data Length: {len(event.data['message'])} bytes | "
-        f"Sent time: {sent_datetime} -"
-        f"Now: {now} -"
+        #f"Sent time: {sent_datetime} -"
+        #f"Now: {now} -"
         f"Latency: {latency}"
     )
 
