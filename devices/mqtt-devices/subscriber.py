@@ -1,7 +1,7 @@
 import random
 from modules.mqtt import MQTTClient
 
-broker = '192.168.1.195'
+broker = 'localhost'
 port = 1883
 topic = "mytopic-response"
 client_id = f'python-mqtt-{random.randint(0, 100)}'

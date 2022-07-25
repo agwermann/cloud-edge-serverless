@@ -23,6 +23,11 @@ class MQTTClient:
         self.mqttclient.on_connect = on_connect
         self.mqttclient.connect(self.broker, self.port)
         return self.mqttclient
+    
+    def disconnect_mqtt(self):
+        def on_disconnect():
+            print("Client disconnected")
+        self.mqttclient.disconnect(on_disconnect)
 
     def generate_payload_size(self, nbytes):
         payload = "-"
@@ -50,11 +55,16 @@ class MQTTClient:
                 print(f"Send `{msg}` to topic `{self.topic}`")
             else:
                 print(f"Failed to send message to topic {self.topic}")
+                print(result)
             msg_count += 1
 
     def subscribe(self):
         def on_message(client, userdata, msg):
-            print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+            msg_dict = json.loads(msg.payload)
+            now = datetime.datetime.now()
+            sent_datetime = datetime.datetime.strptime(msg_dict['timestamp'], "%Y-%m-%dT%H:%M:%S.%f")
+            latency = str(now - sent_datetime)
+            print(f"Received message with latency `{latency}`")
         self.mqttclient.subscribe(self.topic)
         self.mqttclient.on_message = on_message
         self.mqttclient.loop_forever()
