@@ -8,10 +8,12 @@ class MQTTClient:
 
     def __init__(self, client_id, broker, port, topic) -> None:
         self.mqttclient = paho_mqtt_client.Client(client_id)
+        self.client_id = client_id
         self.broker = broker
         self.port = port
         self.topic = topic
         self.message = { "timestamp": 1, "message": "", "priority": 1}
+        self.message_payload = self.generate_payload_size(500)
 
     def connect_mqtt(self):
         def on_connect(client, userdata, flags, rc) -> None:
@@ -37,7 +39,8 @@ class MQTTClient:
 
     def build_message(self, msg_count):
         msg = self.message
-        msg["message"] = str(msg_count) + self.generate_payload_size(500)
+        msg["client_id"] = self.client_id
+        msg["message"] = str(msg_count) + self.message_payload
         msg["timestamp"] = datetime.datetime.now().isoformat()
         return json.dumps(msg)
 
@@ -51,11 +54,12 @@ class MQTTClient:
             msg = self.build_message(msg_count=msg_count)
             result = self.mqttclient.publish(self.topic, msg)
             status = result[0]
-            if status == 0:
-                print(f"Send `{msg}` to topic `{self.topic}`")
-            else:
-                print(f"Failed to send message to topic {self.topic}")
+            if status != 0:
+                print(f"Failed to send in client {self.client_id} message to topic {self.topic}")
+                print(f"Failed to send `{msg}` to topic `{self.topic}`")
                 print(result)
+            #else:
+            #    print(f"Send `{msg}` to topic `{self.topic}`")
             msg_count += 1
 
     def subscribe(self):
@@ -64,7 +68,7 @@ class MQTTClient:
             now = datetime.datetime.now()
             sent_datetime = datetime.datetime.strptime(msg_dict['timestamp'], "%Y-%m-%dT%H:%M:%S.%f")
             latency = str(now - sent_datetime)
-            print(f"Received message with latency `{latency}`")
+            print(f"Received message from `{msg_dict['client_id']}` with latency `{latency}`")
         self.mqttclient.subscribe(self.topic)
         self.mqttclient.on_message = on_message
         self.mqttclient.loop_forever()

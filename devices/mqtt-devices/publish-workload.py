@@ -23,6 +23,7 @@ time_between_publishers = float(sys.argv[5])
 
 def run():
     client_id = f'python-mqtt-{random.randint(0, 1000)}'
+    print('Created client: ', client_id)
     client = MQTTClient(client_id, broker, port, topic)
     client.connect_mqtt()
     client.publish(n_messages=n_messages, message_period=message_period)
