@@ -1,8 +1,8 @@
+import logging
 import time
 import datetime
 import json
 from paho.mqtt import client as paho_mqtt_client
-
 
 class MQTTClient:
 
@@ -14,13 +14,15 @@ class MQTTClient:
         self.topic = topic
         self.message = { "timestamp": 1, "message": "", "priority": 1}
         self.message_payload = self.generate_payload_size(500)
+        self.logger = logging.getLogger("mqtt")
+        self.logger.info("MQTT Client %s created", self.client_id)
 
     def connect_mqtt(self):
         def on_connect(client, userdata, flags, rc) -> None:
             if rc == 0:
-                print("Connected to MQTT Broker on topic %s", self.topic)
+                self.logger.info("Connected to MQTT Broker on topic %s", self.topic)
             else:
-                print("Failed to connect to topic %s, return code %d\n", self.topic, rc)
+                self.logger.error("Failed to connect to topic %s, return code %d\n", self.topic, rc)
 
         self.mqttclient.on_connect = on_connect
         self.mqttclient.connect(self.broker, self.port)
@@ -28,7 +30,7 @@ class MQTTClient:
     
     def disconnect_mqtt(self):
         def on_disconnect():
-            print("Client disconnected")
+            self.logger.info("Client disconnected")
         self.mqttclient.disconnect(on_disconnect)
 
     def generate_payload_size(self, nbytes):
@@ -55,11 +57,11 @@ class MQTTClient:
             result = self.mqttclient.publish(self.topic, msg)
             status = result[0]
             if status != 0:
-                print(f"Failed to send in client {self.client_id} message to topic {self.topic}")
-                print(f"Failed to send `{msg}` to topic `{self.topic}`")
-                print(result)
+                self.logger.error(f"Failed to send in client {self.client_id} message to topic {self.topic}")
+                self.logger.error(f"Failed to send `{msg}` to topic `{self.topic}`")
+                self.logger.error(result)
             #else:
-            #    print(f"Send `{msg}` to topic `{self.topic}`")
+            #    self.logger.info(f"Send `{msg}` to topic `{self.topic}`")
             msg_count += 1
 
     def subscribe(self):
@@ -68,7 +70,7 @@ class MQTTClient:
             now = datetime.datetime.now()
             sent_datetime = datetime.datetime.strptime(msg_dict['timestamp'], "%Y-%m-%dT%H:%M:%S.%f")
             latency = str(now - sent_datetime)
-            print(f"Received message from `{msg_dict['client_id']}` with latency `{latency}`")
+            self.logger.info(f"Received message from `{msg_dict['client_id']}` with latency `{latency}`")
         self.mqttclient.subscribe(self.topic)
         self.mqttclient.on_message = on_message
         self.mqttclient.loop_forever()

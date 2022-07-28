@@ -1,9 +1,10 @@
+import logging
 import random
 import sys
 from modules.mqtt import MQTTClient
 
 if len(sys.argv) < 4:
-    print("Missing paremeters: TOPIC_NAME, NUM_MESSAGES, MESSAGE_PERIOD")
+    logging.error("Missing parameters: TOPIC_NAME, NUM_MESSAGES, MESSAGE_PERIOD")
     exit()
 
 broker = 'localhost'

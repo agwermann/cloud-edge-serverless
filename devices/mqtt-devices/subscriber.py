@@ -1,5 +1,10 @@
+import logging
 import random
 from modules.mqtt import MQTTClient
+
+logging.basicConfig()
+logger = logging.getLogger("mqtt")
+logger.setLevel(logging.INFO)
 
 broker = 'localhost'
 port = 1883

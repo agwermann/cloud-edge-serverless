@@ -1,8 +1,7 @@
-import random
+import logging
 import time
 import subprocess
 import sys
-from modules.mqtt import MQTTClient
 
 # This code generates multiple publishers
 # python3 publish-workload.py mytopic 10 1 10 0.1
@@ -25,7 +24,7 @@ processes = []
 
 if __name__ == '__main__':
     for i in range(1, n_publishers):
-        process = subprocess.Popen(['python3', 'publisher.py', topic, str(n_messages), str(message_period)])
+        process = subprocess.Popen(['python3', 'publisher.py', topic, str(n_messages), str(message_period), '>', 'log.txt'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         processes.append(process)
         time.sleep(time_between_publishers)
 

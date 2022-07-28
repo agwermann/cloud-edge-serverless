@@ -1,3 +1,4 @@
+import logging
 import random
 import time
 import threading
@@ -7,10 +8,14 @@ from modules.mqtt import MQTTClient
 # This code generates multiple publishers
 # python3 publish-workload.py mytopic 10 1 10 0.1
 
+logging.basicConfig()
+logger = logging.getLogger("mqtt")
+logger.setLevel(logging.INFO)
+
 n_args = 5
 
 if len(sys.argv) < n_args+1:
-    print("Missing paremeters: TOPIC_NAME, NUM_MESSAGES, MESSAGE_PERIOD, NUMBER_OF_PUBLISHERS, TIME_BETWEEN_PUBLISHERS")
+    logging.error("Missing paremeters: TOPIC_NAME, NUM_MESSAGES, MESSAGE_PERIOD, NUMBER_OF_PUBLISHERS, TIME_BETWEEN_PUBLISHERS")
     exit()
 
 broker = 'localhost'
@@ -23,7 +28,7 @@ time_between_publishers = float(sys.argv[5])
 
 def run():
     client_id = f'python-mqtt-{random.randint(0, 1000)}'
-    print('Created client: ', client_id)
+    logger.info('Created client: %s', client_id)
     client = MQTTClient(client_id, broker, port, topic)
     client.connect_mqtt()
     client.publish(n_messages=n_messages, message_period=message_period)
