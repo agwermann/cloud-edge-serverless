@@ -38,6 +38,8 @@ def home():
     cloud_event = CloudEventService()
     event = cloud_event.receive_message(request)
 
+    mqtt_client.publish(json.dumps(event.data))
+    
     # Process event
 
     # app.logger.info(
@@ -58,11 +60,9 @@ def home():
         f"Latency: {latency}"
     )
 
-    # app.logger.info(
-        # f"Event Data Content: {event.data}"
-    # )
-
-    mqtt_client.publish(json.dumps(data))
+    app.logger.info(
+        f"Event Data Content: {event.data}"
+    )
 
     # Return 204 - No-content
     return "", 204
