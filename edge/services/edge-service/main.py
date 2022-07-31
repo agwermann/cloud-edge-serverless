@@ -1,4 +1,5 @@
 import sys
+import random
 import json
 import logging
 import datetime
@@ -19,7 +20,7 @@ topic = str(sys.argv[3])
 source = "edge-service"
 message_type = "edge-service-message"
 data = { "edge-service": "edge-service-data" }
-client_id = "edge-service"
+client_id = f'python-mqtt-{random.randint(0, 1000)}'
 
 #broker_address = "192.168.1.195"
 #broker_port = 1883
